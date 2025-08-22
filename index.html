@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+		<script src="plugins/LocationPicker.js"></script>
+		<script src="plugins/MiniMap.js"></script>
+		<link rel="stylesheet" href="plugins/MiniMap.css">
+		<script src="plugins/ResetView.js"></script>
+		<link rel="stylesheet" href="plugins/ResetView.css">
+		<title>Generador de discos de irradiación solar</title>
+		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+		<script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
+		<script defer src="main.js"></script>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body class="flex flex-col h-dvh relative w-screen">
+		<main class="flex grow h-full">
+			<section id="map" style="cursor:crosshair;" class="relative overflow-auto z2"></section>
+			<aside id="panel" class="flex flex-col overflow-auto bg-white dark:bg-gray-900 overflow-auto p-4 z1">
+				<label class="text-gray-900 dark:text-white">Coordenadas</label>
+				<div class="flex flex-wrap">
+					<div class="m-2 grow min-w-[200px]">
+						<div class="relative">
+							<input type="text" id="latitud" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=""/>
+							<label for="latitud" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Latitud</label>
+						</div>
+						<p id="error-latitud" class="mt-2 text-xs text-red-600 dark:text-red-400"></p>
+					</div>
+					<div class="m-2 grow min-w-[200px] relative">
+						<div class="relative">
+							<input type="text" id="longitud" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=""/>
+							<label for="longitud" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Longitud</label>
+						</div>
+						<p id="error-longitud" class="mt-2 text-xs text-red-600 dark:text-red-400 min-h-[1rem]"></p>
+					</div>
+				</div>
+				<div class="flex flex-wrap justify-center">
+					<button id="btn-calcular-1" onclick="calcular(0)" class="flex flex-nowrap items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+						<div id="spinner-anisotropico" class="hidden me-2">
+							<svg class="inline w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+								<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+							</svg>
+						</div>
+						<span id="label-anisotropico">Modelo anisotrópico</span>
+					</button>
+					<button id="btn-calcular-2" onclick="calcular(1)" class="flex flex-nowrap items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+						<div id="spinner-isotropico" class="hidden me-2">
+							<svg class="inline w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+								<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+							</svg>
+						</div>
+						<span id="label-isotropico">Modelo isotrópico</span>
+					</button>
+				</div>
+			</aside>
+		</main>
+		<div id="results" style="width:100%; min-height:100dvh;" class="hidden flex-col justify-start items-start bg-white border-gray-200">
+			<header class="grid grid-cols-3 items-center bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 w-full p-4">
+				<button class="flex justify-start shrink items-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" onclick="hideElements();" style="width:fit-content;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="size-6" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0z"/>
+						<path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
+					</svg>
+					<span class="mb-0.5 mx-2">Regresar</span>
+				</button>
+				<h2 class="text-4xl font-extrabold dark:text-white mx-2 mb-1">Resultados</h2>
+			</header>
+			<h2 id="titulo" class="text-4xl font-extrabold m-3">Disco de irradiación solar</h2>
+			<div class="w-full p-4">
+				<div class="flex flex-nowrap justify-start">
+					<div id="disco" style="width:60vw; height:60vw;"></div>
+					<div class="m-4 grow" style="transform:rotate(90deg);">
+						<input id="Inclinación" type="range" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="-90" max="90">
+						<label for="Inclinación" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Inclinación</label>
+					</div>
+				</div>
+				<div class="m-4">
+					<input id="acimut" type="range" value="180" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="360">
+					<label for="acimut" class="block mb-2 text-sm font-medium text-gray-900 text-center">Acimut</label>
+				</div>
+			</div>
+			<h2 class="text-4xl font-extrabold">Promedio de datos recopilados</h2>
+			<div class="relative mx-auto my-3">
+				<select id="promedios" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+					<option value="0">Índice de claridad de insolación</option>
+					<option selected value="1">Irradiancia difusa de onda corta de toda la superficie del cielo</option>
+					<option value="2">Irradiación descendente de onda corta de toda la superficie del cielo</option>
+					<option value="3">Irradiación UVA de toda la superficie del cielo</option>
+					<option value="4">Albedo de la superficie de todo el cielo</option>
+					<option value="5">Ángulo de puesta del sol</option>
+				</select>
+				<label for="promedios" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Promedio mensual</label>
+			</div>
+			<div id="bar-graphic" class="mx-auto my-3"></div>
+			<h2 class="text-4xl font-extrabold">Ángulo de declinación</h2>
+			<div id="line-graphic" class="mx-auto my-3"></div>
+			<div class="mx-auto">
+				<button id="btn-exportar" onclick="exportar()" class="flex flex-nowrap items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+					<div id="spinner-exportar" class="hidden me-2">
+						<svg class="inline w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+							<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+						</svg>
+					</div>
+					<span id="label-exportar">Exportar documento PDF</span>
+				</button>
+			</div>
+		</div>
+	</body>
+</html>
