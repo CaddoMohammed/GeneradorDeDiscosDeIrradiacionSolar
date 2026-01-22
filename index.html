@@ -37,7 +37,7 @@
 					</div>
 				</div>
 				<div class="flex flex-wrap justify-center">
-					<button id="btn-calcular-1" onclick="Calcular(1)" class="flex flex-nowrap items-center font-semibold text-gray-100 bg-blue-600 hover:bg-blue-800 hover:text-white focus:ring-2 focus:ring-blue-800 dark:focus:ring-gray-300 rounded-lg text-sm px-4 py-2.5 me-2 mb-2 focus:outline-none">
+					<button id="btn-calcular-1" onclick="Calcular(1)" class="flex flex-nowrap items-center font-semibold text-gray-100 bg-blue-600 hover:bg-blue-800 hover:text-white focus:ring-2 focus:ring-blue-800 dark:focus:ring-gray-300 rounded-lg text-sm px-4 py-2.5 me-2 mb-2 focus:outline-none cursor-pointer">
 						<div id="spinner-calcular-1" class="hidden me-2">
 							<svg class="inline w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -46,7 +46,7 @@
 						</div>
 						<span id="label-calcular-1">Modelo isotrópico</span>
 					</button>
-					<button id="btn-calcular-2" onclick="Calcular(2)" class="flex flex-nowrap items-center font-semibold text-gray-100 bg-blue-600 hover:bg-blue-800 hover:text-white focus:ring-2 focus:ring-blue-800 dark:focus:ring-gray-300 rounded-lg text-sm px-4 py-2.5 me-2 mb-2 focus:outline-none">
+					<button id="btn-calcular-2" onclick="Calcular(2)" class="flex flex-nowrap items-center font-semibold text-gray-100 bg-blue-600 hover:bg-blue-800 hover:text-white focus:ring-2 focus:ring-blue-800 dark:focus:ring-gray-300 rounded-lg text-sm px-4 py-2.5 me-2 mb-2 focus:outline-none cursor-pointer">
 						<div id="spinner-calcular-2" class="hidden me-2">
 							<svg class="inline w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -60,7 +60,7 @@
 		</main>
 		<div id="results" class="hidden flex-col flex-grow justify-start items-start bg-white border-gray-200 w-full">
 			<header class="flex flex-col flex-wrap justify-start max-sm:items-center bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 w-full p-4">
-				<button class="flex justify-start shrink items-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 max-sm:me-auto max-sm:ms-2" onclick="HideElements();" style="width:fit-content;">
+				<button id="btn-regresar" class="flex justify-start shrink items-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 max-sm:me-auto max-sm:ms-2" onclick="HideElements();" style="width:fit-content;">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="size-6" viewBox="0 0 16 16">
 						<path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0z"/>
 						<path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
@@ -97,7 +97,7 @@
 				</div>
 			</header>
 			<div class="flex flex-row flex-nowrap grow justify-start items-start bg-white border-gray-200 w-full overflow-auto ">
-				<div class="max-sm:hidden min-w-10 w-[5%] max-w-20 my-auto" onclick="MostrarGrafico(0)">
+				<div class="max-sm:hidden min-w-10 w-[5%] max-w-20 my-auto text-gray-500/90 hover:text-gray-500/70 cursor-pointer" onclick="MostrarGrafico(0)">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
 						<path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
 					</svg>
@@ -106,14 +106,14 @@
 					<h2 class="max-sm:hidden sm:text-4xl font-extrabold text-gray-700 mx-2 my-2 text-center" id="titulo">Resultados</h2>
 					<div id="grafico" class="mx-auto flex-grow aspect-square object-contain min-w-[300px] min-h-[300px]"></div>
 				</div>
-				<div class="max-sm:hidden min-w-10 w-[5%] max-w-20 my-auto" onclick="MostrarGrafico(1)">
+				<div class="max-sm:hidden min-w-10 w-[5%] max-w-20 my-auto text-gray-500/90 hover:text-gray-500/70 cursor-pointer" onclick="MostrarGrafico(1)">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
 						<path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
 					</svg>
 				</div>
 			</div>
 			<div class="mx-auto mt-2">
-				<button id="btn-exportar" onclick="Exportar()" class="flex flex-nowrap items-center text-white bg-blue-700 hover:bg-blue-800 hover:text-white focus:ring-2 focus:ring-blue-800 dark:focus:ring-gray-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-5 dark:bg-blue-600 focus:outline-none">
+				<button id="btn-exportar" onclick="Exportar()" class="flex flex-nowrap items-center text-white bg-blue-600 hover:bg-blue-800 hover:text-white cursor-pointer focus:ring-2 focus:ring-blue-800 dark:focus:ring-gray-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-5 focus:outline-none">
 					<div id="spinner-exportar" class="hidden me-2">
 						<svg class="inline w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>

@@ -52,7 +52,7 @@ document.getElementById("select-grafico").addEventListener("change",() => {
 });
 function validation(x){
 	let a = Inputs.findIndex(b => b["id"]===x);
-	const Max = [90,180],Name = ["latitud","longitud"];
+	const Max=[90,180], Name=["latitud","longitud"];
 	if(isNaN(Inputs[a]["value"])){
 		Inputs[a]["className"] = "block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none dark:text-white dark:border-red-500 border-red-600 dark:focus:border-red-500 focus:outline-none focus:ring-0 focus:border-red-600 peer";
 		ErrorInputs[a]["innerHTML"] = "Solamente números";
@@ -114,10 +114,12 @@ async function Exportar(){
 		return;
 	}
 	try{
+		document.getElementById("btn-regresar").disabled = true;
 		Loading("exportar","Exportar documento");
 		let a = await fetch("https://discos-de-irradiacion-solar-server-252997894133.us-central1.run.app/exportar-pdf",{"method":"POST","headers":{"Content-Type":"application/json"},"body":JSON.stringify(Datos)});
 		if(!a["ok"]){
 			Loading("exportar","Exportar documento");
+			document.getElementById("btn-regresar").disabled = false;
 			throw new Error(`HTTP ${a.status}: ${errBody}`)
 		}
 		const blob = await a.blob();
@@ -129,6 +131,7 @@ async function Exportar(){
 		b["download"] = "Disco de irradiación solar";
 		document["body"].appendChild(b);
 		Loading("exportar","Exportar documento");
+		document.getElementById("btn-regresar").disabled = false;
 		b.click();
 		b.remove();
 		window["URL"].revokeObjectURL(url);
@@ -180,14 +183,14 @@ function Loading(x,y){
 	if(spinner["classList"].contains("hidden")){
 		spinner["classList"].remove("hidden");
 		btn["disabled"] = true;
-		btn["classList"].remove("bg-blue-600");
+		btn["classList"].remove("bg-blue-600","cursor-pointer");
 		btn["classList"].add("bg-blue-800","cursor-not-allowed");
 		label["innerHTML"] = "Cargando...";
 	} else {
 		label["innerHTML"] = y;
 		spinner["classList"].add("hidden");
 		btn["disabled"] = false;
-		btn["classList"].add("bg-blue-600");
+		btn["classList"].add("bg-blue-600","cursor-pointer");
 		btn["classList"].remove("bg-blue-800","cursor-not-allowed");
 	}
 }
