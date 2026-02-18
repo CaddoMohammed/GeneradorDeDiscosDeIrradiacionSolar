@@ -80,7 +80,7 @@ async function Calcular(x){
 	if((error[0]===true)||(error[1]===true)){
 		return;
 	}
-	let labels = ["Modelo isotrópico","Modelo anisotrópico"];
+	let labels = ["Generar","Modelo anisotrópico"];
 	let z = {"lat":Number(Inputs[0]["value"]),"lng":Number(Inputs[1]["value"]),"modelo":x};
 	if(Datos){
 		if((Datos["coordenadas"][0]===z["lat"])&&(Datos["coordenadas"][1]===z["lng"])&&(Datos["modelo"]===x)){
@@ -91,13 +91,13 @@ async function Calcular(x){
 		}
 	}
 	try{
-		document.getElementById(x==1?"btn-calcular-2":"btn-calcular-1").disabled = true;
+		document.getElementById(x==1?"btn-calcular-2":"btn-calcular-1")["disabled"] = true;
 		Loading(`calcular-${x}`,labels[x-1]);
 		let a = await fetch(`https://discos-de-irradiacion-solar-server-252997894133.us-central1.run.app/generar`,{"method":"POST","headers":{"Content-Type":"application/json"},"body":JSON.stringify(z)});
 		Loading(`calcular-${x}`,labels[x-1]);
-		document.getElementById(x==1?"btn-calcular-2":"btn-calcular-1").disabled = false;
+		document.getElementById(x==1?"btn-calcular-2":"btn-calcular-1")["disabled"] = false;
 		if(!a["ok"]){
-			throw new Error(`HTTP ${a.status}: ${errBody}`)
+			throw new Error(`HTTP ${a.status}:${errBody}`)
 		}
 		Datos = await a.json();
 		HideElements();
@@ -194,47 +194,6 @@ function Loading(x,y){
 		btn["classList"].remove("bg-blue-800","cursor-not-allowed");
 	}
 }
-function CrearDisco(){
-	let z = {
-		"x":[-1,-0.9722222222222222,-0.9444444444444444,-0.9166666666666666,-0.8888888888888888,-0.8611111111111112,-0.8333333333333334,-0.8055555555555556,-0.7777777777777778,-0.75,-0.7222222222222222,-0.6944444444444444,-0.6666666666666666,-0.6388888888888888,-0.6111111111111112,-0.5833333333333334,-0.5555555555555556,-0.5277777777777778,-0.5,-0.4722222222222222,-0.4444444444444444,-0.4166666666666667,-0.3888888888888889,-0.3611111111111111,-0.3333333333333333,-0.3055555555555556,-0.2777777777777778,-0.25,-0.2222222222222222,-0.19444444444444445,-0.16666666666666666,-0.1388888888888889,-0.1111111111111111,-0.08333333333333333,-0.05555555555555555,-0.027777777777777776,0,0.027777777777777776,0.05555555555555555,0.08333333333333333,0.1111111111111111,0.1388888888888889,0.16666666666666666,0.19444444444444445,0.2222222222222222,0.25,0.2777777777777778,0.3055555555555556,0.3333333333333333,0.3611111111111111,0.3888888888888889,0.4166666666666667,0.4444444444444444,0.4722222222222222,0.5,0.5277777777777778,0.5555555555555556,0.5833333333333334,0.6111111111111112,0.6388888888888888,0.6666666666666666,0.6944444444444444,0.7222222222222222,0.75,0.7777777777777778,0.8055555555555556,0.8333333333333334,0.8611111111111112,0.8888888888888888,0.9166666666666666,0.9444444444444444,0.9722222222222222,1],
-		"y":[-1,-0.9722222222222222,-0.9444444444444444,-0.9166666666666666,-0.8888888888888888,-0.8611111111111112,-0.8333333333333334,-0.8055555555555556,-0.7777777777777778,-0.75,-0.7222222222222222,-0.6944444444444444,-0.6666666666666666,-0.6388888888888888,-0.6111111111111112,-0.5833333333333334,-0.5555555555555556,-0.5277777777777778,-0.5,-0.4722222222222222,-0.4444444444444444,-0.4166666666666667,-0.3888888888888889,-0.3611111111111111,-0.3333333333333333,-0.3055555555555556,-0.2777777777777778,-0.25,-0.2222222222222222,-0.19444444444444445,-0.16666666666666666,-0.1388888888888889,-0.1111111111111111,-0.08333333333333333,-0.05555555555555555,-0.027777777777777776,0,0.027777777777777776,0.05555555555555555,0.08333333333333333,0.1111111111111111,0.1388888888888889,0.16666666666666666,0.19444444444444445,0.2222222222222222,0.25,0.2777777777777778,0.3055555555555556,0.3333333333333333,0.3611111111111111,0.3888888888888889,0.4166666666666667,0.4444444444444444,0.4722222222222222,0.5,0.5277777777777778,0.5555555555555556,0.5833333333333334,0.6111111111111112,0.6388888888888888,0.6666666666666666,0.6944444444444444,0.7222222222222222,0.75,0.7777777777777778,0.8055555555555556,0.8333333333333334,0.8611111111111112,0.8888888888888888,0.9166666666666666,0.9444444444444444,0.9722222222222222,1],
-		"z":[],
-		"autocontour":true,
-		"type":"contour",
-		"colorscale":"Jet"
-	}
-	for(let i=0;i<73;i++){
-		let row=[];
-		for(let j=0;j<73;j++){
-			let x_val=z["x"][i];
-			let y_val=z["y"][j];
-			let r_coord=Math.sqrt(Math.pow(x_val,2)+Math.pow(y_val,2));
-			if(r_coord<=1){
-				let theta_coord = Math.atan2(y_val,x_val)*(180/Math.PI);
-				if(theta_coord<0){
-					theta_coord = 360+theta_coord;
-				}
-				let r_idx=Math.round(r_coord*18);
-				let theta_idx=Math.round(theta_coord/5);
-				if(r_idx>18){
-					r_idx = 18;
-				}
-				if(theta_idx>=73){
-					theta_idx = 0;
-				}
-				if(Datos["Disco de irradiacion solar"][theta_idx]!==undefined){
-					row.push(Datos["Disco de irradiacion solar"][theta_idx][r_idx]);
-				} else {
-					row.push(0);
-				}
-			} else {
-				row.push(NaN);
-			}
-		}
-		z["z"].push(row);
-	}
-	return z;
-}
 function MostrarGrafico(u){
 	if(u===0){
 		if(select>0){
@@ -260,9 +219,8 @@ function Grafico(){
 	switch(select){
 		case 0:
 			Title["innerHTML"] = "Disco de irradiación solar";
-			x = CrearDisco();
-			z["toImageButtonOptions"] = {"format":"png","filename":`Disco de irradiación solar, lat:${Datos["coordenadas"][0]}, lng:${Datos["coordenadas"][1]}`,"height":1080,"width":1300,"scale":10};
-			break;
+			PolarContour.plot("grafico",Datos["Disco de irradiacion solar"],{"colorscale":["#00012b","#000f5a","#0078be","#00a08c","#1ebe5a","#78e61e","#e6f014","#ffeb14","#ffd228","#ffaa3c","#ff8232","#ff5a28","#ff321e","#ff0000"],"rotate":0,"title":"","darkMode":false,"colorbarTitle":"Eficiencia","rLabel":"Inclinación","thetaLabel":"Azimut","zLabel":"Eficiencia"});
+			return;
 		case 1:
 			Title["innerHTML"] = "Promedio mensual de irradiación descendente de onda corta";
 			x = Datos["Promedios"][2];
